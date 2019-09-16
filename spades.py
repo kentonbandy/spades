@@ -9,13 +9,11 @@ import textwrap
 
 
 """TO DO:
-make every input quittable
 clean up the output
 make moar dictionaries
 make bot bets smarter (more realistic - they're betting a little too high)
 make bot trick play smarter (look at played cards)
 general cleanup
-rounds conditional based on points (high score < 500)
 """
 
 
@@ -97,6 +95,7 @@ def main_menu():
             place of their total score, resulting in a loss of 55 points."""
             dedented_message = textwrap.dedent(message).strip()
             print(textwrap.fill(dedented_message, 80))
+            print("\nType \"q\" and press Enter to quit at any time.")
             practice()
             continue
         elif prompt == "3":
@@ -244,28 +243,17 @@ def get_order(round, players, offset):
     new_order.extend(players[:offset + round - 1])
     return new_order
 
-def betting_round(order, player_hands):
-    """Initiates a round of betting and returns each player's bet"""
-    player_bets = [0, 0, 0, 0]
+def display_bets(player_bets, play_order):
+    clear()
     print("Let's place some bets! How many books will you win this round?\n")
-    for i in range(4):
-        wait()
-        if "You" in order[i]:
-            display_hand(player_hands[0])
-            player_bets[0] = get_bet()
-        elif "Yasmine" in order[i]:
-            player_bets[1] = bot_bet(player_hands[1])
-            print(f"Yasmine bets {player_bets[1]} books.")
-        elif "Florian" in order[i]:
-            player_bets[2] = bot_bet(player_hands[2])
-            print(f"Florian bets {player_bets[2]} books.")
-        elif "Sakura" in order[i]:
-            player_bets[3] = bot_bet(player_hands[3])
-            print(f"Sakura bets {player_bets[3]} books.")
-    wait()
-    print("\n...\n")
-    wait(1)
-    return player_bets
+    if play_order[0] == "You":
+        print("You go first!\n")
+    else:
+        print(f"{play_order[0]} goes first!\n")
+    for player in play_order:
+        ind = players.index(player)
+        if player_bets[ind] > -1:
+            print(f"{players[ind]} bet {player_bets[ind]} tricks.")
 
 
 def find_suit(card):
@@ -526,12 +514,25 @@ def main():
         player_hands[0] = sort_hand(player_hands[0], main_deck)
         print("\n...")
         wait()
-        clear()
-        if play_order[0] == "You":
-            print(f"{play_order[0]} go first!\n")
-        else:
-            print(f"{play_order[0]} goes first!\n")
-        player_bets = betting_round(order, player_hands)
+        #while True:
+        player_bets = [-1, -1, -1, -1]
+        display_bets(player_bets, play_order)
+        for i in range(4):
+            if order[i] == "You":
+                print("")
+                display_hand(player_hands[0])
+                player_bets[0] = get_bet()
+                clear()
+                display_bets(player_bets, play_order)
+                wait()
+            else:
+                ind = players.index(order[i])
+                player_bets[ind] = bot_bet(player_hands[ind])
+                display_bets(player_bets, play_order)
+                wait()
+        wait()
+        print("\n...\n")
+        wait(1)
         spaded = False
         #trick_pool and tricks_won order is static: [user, yasmine, florian, sakura]
         tricks_won = [0, 0, 0, 0]
@@ -581,7 +582,7 @@ def main():
         scoreboard, highest_score = get_scores(scoreboard, tricks_won, player_bets)
         round += 1
         order = order[1:] + order[:1]
-        press_enter()
+        input("Press Enter to begin the next round!")
 
 main()
 
