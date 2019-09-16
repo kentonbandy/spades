@@ -89,7 +89,7 @@ def main_menu():
             In this game, you can use shorthand to type your card:
             Ace of Spades = \"as\", 7 of Clubs = \"7c\", 10 of Hearts = \"10h\", etc.
             You can also type out the full name of the card if you wish.
-            For the rules of Spades, just search Google for \"spades wikipedia\"
+            For the rules of Spades, just search Google for \"spades wikipedia\".
             In this variant, the first to 300 points wins the round.
             Sandbagging occurs when a player has 5 or more points in the ones
             place of their total score, resulting in a loss of 55 points."""
