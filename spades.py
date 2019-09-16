@@ -7,6 +7,7 @@ import sys
 import os
 import textwrap
 
+from graphical_card import graphical_hand
 
 """TO DO:
 clean up the output
@@ -16,10 +17,14 @@ make bot trick play smarter (look at played cards)
 general cleanup
 """
 
-
-
+import signal
+def signal_handler(sig, frame):
+        print('\nGoodbye!')
+        quit()
+signal.signal(signal.SIGINT, signal_handler)
 
 def wait(seconds = 0.3):
+    return
     """Iterates the given delay (in seconds) and "----" three times"""
     time.sleep(seconds)
 
@@ -205,8 +210,8 @@ def get_bet():
     while True:
         error = "\nPlease give a number from 0 to 13!\n"
         bet = input(
-            """\nYour turn to bet!"""
-            """\n(Guess how many you will win)\n""")
+            """\nYour turn to bet! (Guess how many tricks you will win, 0-13)\n"""
+            )
         if bet.lower() == "quit" or bet.lower() == "q":
             clear()
             print("Thanks for playing!")
@@ -217,7 +222,7 @@ def get_bet():
             print(error)
             time.sleep(0.5)
             continue
-        if (num > -1) and (num < 14):
+        if (num >= 0) and (num <= 13):
             return num
         else:
             print(error)
@@ -253,7 +258,7 @@ def display_bets(player_bets, play_order):
     for player in play_order:
         ind = players.index(player)
         if player_bets[ind] > -1:
-            print(f"{players[ind]} bet {player_bets[ind]} tricks.")
+            print(f"{players[ind].rjust(7)} bet {player_bets[ind]} tricks.")
 
 
 def find_suit(card):
@@ -359,19 +364,24 @@ def card_formatter(card):
     else:
         return None
 
-def display_hand(hand):
+
+def display_hand(hand, explanation="Your hand:"):
     message = ""
-    print("Your hand:")
-    for card in hand:
-        message += f"{card}, "
-    print(textwrap.fill(message.rstrip(", "), 80))
+    print(explanation)
+    graphical_hand(hand)
 
 def user_play_card(hand, trick_pool, play_order, spaded, first_card):
     """Prompts the user to play a card, checks whether the played card is legal, and returns the card."""
     first_card_suit = find_suit(first_card)
     hand_suits = [find_suit(card) for card in hand]
+
     while True:
         display_hand(hand)
+        if first_card_suit in hand_suits:
+            matching_suit_cards_in_hand = [card for card in hand if find_suit(card) == first_card_suit]
+            print()
+            display_hand(matching_suit_cards_in_hand, explanation = "Cards matching opening suit:")
+
         if first_card:
             user_card = card_formatter(input("\nWhich card would you like to play?\n"))
         else:
@@ -418,7 +428,7 @@ def display_tricks_won(tricks_won, player_bets):
             tri = "trick"
         else:
             tri = "tricks"
-        print(f"{players[n]} {hav} won {tricks_won[n]} {tri} and {nee} {player_bets[n]}.")
+        print(f"{players[n].rjust(7)} {hav} won {tricks_won[n]} {tri} and {nee} {player_bets[n]}.")
         wait(0.1)
 
 def get_scores(score, tricks, bets):
