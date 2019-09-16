@@ -37,6 +37,32 @@ def clear():
     else:
         sys.stdout.write('\033[2J\033[1;1H')
 
+
+rectangle = """--------------------------------------------------------------------------------
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                Resize your window so that the edges of                       |
+|                this rectangle are visible and not                            |
+|                distorted for the best playing experience!                    |
+|                                                                              |
+|                                                                              |
+|                Press enter when you are done.                                |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+-------------------------------------------------------------------------------
+"""
+
 def main_menu():
     while True:
         clear()
@@ -54,7 +80,8 @@ def main_menu():
         print("\nMain Menu:")
         print("\n1. Begin Game")
         print("2. How to Play (recommended for first time players)")
-        print("3. End Game")
+        print("3. Calibrate Window Size")
+        print("4. End Game")
         prompt = input("\nWhat would you like to do? Enter the number of your choice:\n")
         if prompt == "1":
             break
@@ -71,13 +98,17 @@ def main_menu():
             For the rules of Spades, just search Google for \"spades wikipedia\"
             In this variant, the first to 300 points wins the round.
             Sandbagging occurs when a player has 5 or more points in the ones
-            place of their total score, resulting in a loss of 55 points.
-            """
+            place of their total score, resulting in a loss of 55 points."""
             dedented_message = textwrap.dedent(message).strip()
             print(textwrap.fill(dedented_message, 80))
             practice()
             continue
         elif prompt == "3":
+            clear()
+            print(rectangle)
+            input()
+            continue
+        elif prompt == "4":
             clear()
             print("Thanks for playing!")
             quit()
