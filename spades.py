@@ -9,10 +9,6 @@ import textwrap
 
 
 """TO DO:
-create a main menu:
-    list of instructions
-    how to quit
-    ?
 make every input quittable
 clean up the output
 make moar dictionaries
@@ -108,7 +104,7 @@ def main_menu():
             print(rectangle)
             input()
             continue
-        elif prompt == "4":
+        elif prompt == "4" or prompt.lower() == "quit" or prompt.lower() == "q":
             clear()
             print("Thanks for playing!")
             quit()
@@ -125,6 +121,10 @@ def practice():
             print("\nWell done! Now you're ready to play.")
             time.sleep(2)
             break
+        elif practice.lower() == "quit" or practice.lower() == "q":
+            clear()
+            print("Thanks for playing!")
+            quit()
         else:
             print("\nThat didn't work! Try again, being careful to type the card or shorthand correctly.")
             wait()
@@ -208,6 +208,10 @@ def get_bet():
         bet = input(
             """\nYour turn to bet!"""
             """\n(Guess how many you will win)\n""")
+        if bet.lower() == "quit" or bet.lower() == "q":
+            clear()
+            print("Thanks for playing!")
+            quit()
         try:
             num = int(bet)
         except ValueError:
@@ -351,7 +355,11 @@ def bot_play_card(hand, trick_pool, bet, tricks, spaded, first_card):
                 return scored_hand[0]
 
 def card_formatter(card):
-    if card in sh_list:
+    if card.lower() == "quit" or card.lower() == "q":
+        clear()
+        print("Thanks for playing!")
+        quit()
+    elif card in sh_list:
         formatted_card = sh_dict[card]
         return formatted_card
     elif card.lower() in [i.lower() for i in main_deck]:
