@@ -12,6 +12,8 @@ from graphical_card import graphical_hand
 """TO DO:
 clean up the output
 make moar dictionaries
+enable users to bet on the blind
+update scoring to account for blind and nil betting
 make bot bets smarter (more realistic - they're betting a little too high)
 make bot trick play smarter (look at played cards)
 general cleanup
@@ -58,8 +60,10 @@ rectangle = """-----------------------------------------------------------------
 |                                                                              |
 |                                                                              |
 |                                                                              |
+|                                                                              |
 -------------------------------------------------------------------------------
 """
+            
 
 def main_menu():
     while True:
@@ -116,7 +120,6 @@ def main_menu():
             print("\nPlease enter the number of your choice (1, 2, or 3).")
             time.sleep(2)
             continue
-
 
 def practice():
     while True:
@@ -291,12 +294,16 @@ def play_spade(user_card, hand, trick_pool, spaded, first_card):
     if "Spades" not in user_card:
         return None
     elif first_card and ("Spades" not in first_card) and (find_suit(first_card) in hand_suits):
+        clear()
         print("\nYou cannot play a Spade if you can play the suit of the opening card.")
+        print("Try playing a card in the same suit as the opening card.")
         return True
     elif (first_card == "") and (spaded == False):
         for suit in hand_suits:
             if suit != "Spades":
+                clear()
                 print("You cannot open with a Spade if you have non-Spade cards and Spades have not been broken.")
+                print("Try a non-spade card in your hand.")
                 return True
     else:
         return None
@@ -364,38 +371,36 @@ def card_formatter(card):
     else:
         return None
 
-
-#def display_hand(hand, matching_suit_cards_in_hand, explanation="Your hand:"):
-#    print(explanation)
-#    graphical_hand(hand, matching_suit_cards_in_hand)
-
 def user_play_card(hand, trick_pool, play_order, spaded, first_card):
     """Prompts the user to play a card, checks whether the played card is legal, and returns the card."""
     first_card_suit = find_suit(first_card)
     hand_suits = [find_suit(card) for card in hand]
 
-    while True:
-        #display_hand(hand)
-        if first_card:
-            print("\nYour hand:")
-            matching_suit_cards_in_hand = [card for card in hand if find_suit(card) == first_card_suit]
-            graphical_hand(hand, matching_suit_cards_in_hand)
-            user_card = card_formatter(input("\nWhich card would you like to play?\n"))
-        else:
-            print("\nYour hand:")
-            graphical_hand(hand, hand)
-            user_card = card_formatter(input("\nYou start the trick! Which card would you like to play?\n"))
-        if user_card not in hand:
-                print("\nPlease choose a card in your hand!")
-                print("Be sure to type it exactly as it appears in your hand.\n")
-                continue
-        elif play_spade(user_card, hand, trick_pool, spaded, first_card):
-            continue
-        elif first_card_suit != find_suit(user_card):
-            if first_card_suit in hand_suits:
-                print("You have to play the same suit as the opening card if possible.")
-                continue
-        return user_card
+    if first_card:
+        print("\nYour hand:")
+        matching_suit_cards_in_hand = [card for card in hand if find_suit(card) == first_card_suit]
+        graphical_hand(hand, matching_suit_cards_in_hand)
+        user_card = card_formatter(input("\nWhich card would you like to play?\n"))
+    else:
+        print("\nYour hand:")
+        graphical_hand(hand, hand)
+        user_card = card_formatter(input("\nYou start the trick! Which card would you like to play?\n"))
+    if user_card not in hand:
+            clear()
+            print("\nPlease choose a card in your hand!")
+            print("Be sure to type it exactly as it appears in your hand,")
+            print("or use the following shorthand: \"Ace of Spades\" = \"as\"")
+            press_enter()
+            return ""
+    elif play_spade(user_card, hand, trick_pool, spaded, first_card):
+        press_enter()
+        return ""
+    elif first_card_suit != find_suit(user_card):
+        if first_card_suit in hand_suits:
+            print("You have to play the same suit as the opening card if possible.")
+            press_enter()
+            return ""
+    return user_card
 
 def determine_winner(trick_pool, tricks_won, first_card):
     ts_deck = trick_score_deck(build_score_deck(), find_suit(first_card))
@@ -429,6 +434,7 @@ def display_tricks_won(tricks_won, player_bets):
             tri = "tricks"
         print(f"{players[n].rjust(7)} {hav} won {tricks_won[n]} {tri} and {nee} {player_bets[n]}.")
         wait(0.1)
+    print()
 
 def display_current_trick(trick_pool, player_hands, play_order):
     print(f"Trick {14 - len(player_hands[0])}/13:\n")
@@ -508,9 +514,6 @@ def get_scores(score, tricks, bets):
         print("\nEveryone is tied for the lead!")
     wait(1)
     return score, high_score
-    
-
-
 
 version = "Spades version 0.0.1 (Alpha)"
 players = ["You", "Yasmine", "Florian", "Sakura"]
@@ -518,9 +521,6 @@ order = []
 main_deck = build_deck()
 sh_list = build_shorthand(main_deck)
 sh_dict = build_shorthand_dict(sh_list, main_deck)
-
-
-
 
 def main():
     """Main body of the program"""
@@ -579,10 +579,11 @@ def main():
             for player in play_order:
                 wait()
                 if player == "You":
-                    clear()
-                    display_tricks_won(tricks_won, player_bets)
-                    display_current_trick(trick_pool, player_hands, play_order)
-                    trick_pool[0] = user_play_card(player_hands[0], trick_pool, play_order, spaded, first_card)
+                    while trick_pool[0] == "":
+                        clear()
+                        display_tricks_won(tricks_won, player_bets)
+                        display_current_trick(trick_pool, player_hands, play_order)
+                        trick_pool[0] = user_play_card(player_hands[0], trick_pool, play_order, spaded, first_card)
                     player_hands[0].remove(trick_pool[0])
                     if "Spades" in trick_pool[0]:
                         spaded = True
