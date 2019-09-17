@@ -29,16 +29,37 @@ class GraphicalCard:
     def line_3(self):
         print(f"│ {self.color}{self.suit}{Fore.RESET}  ", end=" ")
 
-def graphical_hand(hand):
+def graphical_hand(hand, matching_suit_cards_in_hand):
     graphical_cards = [GraphicalCard(card) for card in hand]
-    for card in graphical_cards:
-        card.line_1()
+    for card in hand:
+        i = hand.index(card)
+        if card in matching_suit_cards_in_hand:
+            graphical_cards[i].line_1()
+        else:
+            print(f"     ", end=" ")
     print()
 
-    for card in graphical_cards:
-        card.line_2()
+    for card in hand:
+        i = hand.index(card)
+        if card in matching_suit_cards_in_hand:
+            graphical_cards[i].line_2()
+        else:
+            graphical_cards[i].line_1()
     print()
 
-    for card in graphical_cards:
-        card.line_3()
+    for card in hand:
+        i = hand.index(card)
+        if card in matching_suit_cards_in_hand:
+            graphical_cards[i].line_3()
+        else:
+            graphical_cards[i].line_2()
+    print()
+
+
+    for card in hand:
+        i = hand.index(card)
+        if card in matching_suit_cards_in_hand:
+            print(f"     ", end=" ")
+        else:
+            graphical_cards[i].line_3()
     print()

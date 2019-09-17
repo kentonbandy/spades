@@ -25,8 +25,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 def wait(seconds = 0.3):
     return
-    """Iterates the given delay (in seconds) and "----" three times"""
-    time.sleep(seconds)
+    #time.sleep(seconds)
 
 def clear():
     """Clears the terminal screen."""
@@ -73,6 +72,7 @@ def main_menu():
         print("               .:.")
         print("\n              SPADES")
         print("          By Kenton Bandy")
+        print("          and Brian Farr")
         print("               2019")
         print("\nPlay a game of spades with your friends")
         print("    Yasmine, Florian, and Sakura.\n")
@@ -141,7 +141,7 @@ def build_deck():
     """Creates and returns a standard deck of cards in an ordered list"""
     card_values = list(range(2, 11))
     card_values.extend(["Jack", "Queen", "King", "Ace"])
-    suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
+    suits = ["Hearts", "Clubs", "Diamonds", "Spades"]
     deck = []
     for suit in suits:
         for value in card_values:
@@ -365,10 +365,9 @@ def card_formatter(card):
         return None
 
 
-def display_hand(hand, explanation="Your hand:"):
-    message = ""
-    print(explanation)
-    graphical_hand(hand)
+#def display_hand(hand, matching_suit_cards_in_hand, explanation="Your hand:"):
+#    print(explanation)
+#    graphical_hand(hand, matching_suit_cards_in_hand)
 
 def user_play_card(hand, trick_pool, play_order, spaded, first_card):
     """Prompts the user to play a card, checks whether the played card is legal, and returns the card."""
@@ -376,15 +375,15 @@ def user_play_card(hand, trick_pool, play_order, spaded, first_card):
     hand_suits = [find_suit(card) for card in hand]
 
     while True:
-        display_hand(hand)
-        if first_card_suit in hand_suits:
-            matching_suit_cards_in_hand = [card for card in hand if find_suit(card) == first_card_suit]
-            print()
-            display_hand(matching_suit_cards_in_hand, explanation = "Cards matching opening suit:")
-
+        #display_hand(hand)
         if first_card:
+            print("\nYour hand:")
+            matching_suit_cards_in_hand = [card for card in hand if find_suit(card) == first_card_suit]
+            graphical_hand(hand, matching_suit_cards_in_hand)
             user_card = card_formatter(input("\nWhich card would you like to play?\n"))
         else:
+            print("\nYour hand:")
+            graphical_hand(hand, hand)
             user_card = card_formatter(input("\nYou start the trick! Which card would you like to play?\n"))
         if user_card not in hand:
                 print("\nPlease choose a card in your hand!")
@@ -431,10 +430,32 @@ def display_tricks_won(tricks_won, player_bets):
         print(f"{players[n].rjust(7)} {hav} won {tricks_won[n]} {tri} and {nee} {player_bets[n]}.")
         wait(0.1)
 
+def display_current_trick(trick_pool, player_hands, play_order):
+    print(f"Trick {14 - len(player_hands[0])}/13:\n")
+
+    for card in trick_pool:
+        if players[trick_pool.index(card)] == play_order[0]:
+            action = "opened with"
+        else:
+            action = "played"
+        if card:
+            ind = trick_pool.index(card)
+            print(f"{players[ind]} {action} the {trick_pool[ind]}.")
+    print()
+
+    if players[trick_pool.index(card)] != play_order[0]:
+        print("\nTrick pool:")
+    play_order_pool = []
+    for player in play_order:
+        if trick_pool[players.index(player)]:
+            play_order_pool.append(trick_pool[players.index(player)])
+    if len(play_order_pool) > 0:
+        graphical_hand(play_order_pool, play_order_pool)
+
 def get_scores(score, tricks, bets):
     round_scores = [0, 0, 0, 0]
     high_scorers = []
-    print("")
+    print()
     for i in range(4):
         key = players[i]
         base_num = bets[i] * 10
@@ -518,7 +539,7 @@ def main():
         wait(0.5)
         shuffled_deck = shuffle_deck(main_deck)
         wait(0.5)
-        print("")
+        print()
         player_hands = deal_cards(shuffled_deck)
         wait(0.5)
         player_hands[0] = sort_hand(player_hands[0], main_deck)
@@ -529,8 +550,9 @@ def main():
         display_bets(player_bets, play_order)
         for i in range(4):
             if order[i] == "You":
-                print("")
-                display_hand(player_hands[0])
+                print()
+                print("\nYour hand:")
+                graphical_hand(player_hands[0], player_hands[0])
                 player_bets[0] = get_bet()
                 clear()
                 display_bets(player_bets, play_order)
@@ -556,31 +578,28 @@ def main():
             print(f"\nTrick {14 - len(player_hands[0])}/13:\n")
             for player in play_order:
                 wait()
-                if player == play_order[0]:
-                    action = "opened with"
-                else:
-                    action = "played"
                 if player == "You":
-                    index = 0
-                    trick_pool[index] = user_play_card(player_hands[index], trick_pool, play_order, spaded, first_card)
-                    player_hands[index].remove(trick_pool[index])
-                    print(f"You {action} the {trick_pool[index]}.")
-                    if "Spades" in trick_pool[index]:
+                    clear()
+                    display_tricks_won(tricks_won, player_bets)
+                    display_current_trick(trick_pool, player_hands, play_order)
+                    trick_pool[0] = user_play_card(player_hands[0], trick_pool, play_order, spaded, first_card)
+                    player_hands[0].remove(trick_pool[0])
+                    if "Spades" in trick_pool[0]:
                         spaded = True
                 else:
-                    if player == "Yasmine":
-                        index = 1
-                    elif player == "Florian":
-                        index = 2
-                    elif player == "Sakura":
-                        index = 3
+                    clear()
+                    display_tricks_won(tricks_won, player_bets)
+                    display_current_trick(trick_pool, player_hands, play_order)
+                    index = players.index(player)
                     trick_pool[index] = bot_play_card(player_hands[index], trick_pool, player_bets[index], tricks_won[index], spaded, first_card)
                     player_hands[index].remove(trick_pool[index])
-                    print(f"{player} {action} the {trick_pool[index]}.")
                     if "Spades" in trick_pool[index]:
                         spaded = True
+                clear()
+                display_tricks_won(tricks_won, player_bets)
+                display_current_trick(trick_pool, player_hands, play_order)
                 if player == play_order[0]:
-                        first_card = trick_pool[index]
+                        first_card = trick_pool[players.index(player)]
             wait()
             tricks_won, winner = determine_winner(trick_pool, tricks_won, first_card)
             press_enter()
