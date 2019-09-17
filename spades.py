@@ -10,13 +10,14 @@ import textwrap
 from graphical_card import graphical_hand
 
 """TO DO:
-clean up the output
 make moar dictionaries
 enable users to bet on the blind
 update scoring to account for blind and nil betting
+implement sleep
 make bot bets smarter (more realistic - they're betting a little too high)
 make bot trick play smarter (look at played cards)
 general cleanup
+make errors less annoying (maybe display the message at the bottom and then refresh)
 """
 
 import signal
@@ -61,8 +62,7 @@ rectangle = """-----------------------------------------------------------------
 |                                                                              |
 |                                                                              |
 |                                                                              |
--------------------------------------------------------------------------------
-"""
+-------------------------------------------------------------------------------"""
             
 
 def main_menu():
@@ -208,13 +208,34 @@ def sort_hand(hand, deck):
                 sorted_hand.append(card)
     return sorted_hand
 
-def get_bet():
+def get_bet(hand):
     """Returns the user's bet and avoids errors"""
     while True:
         error = "\nPlease give a number from 0 to 13!\n"
-        bet = input(
-            """\nYour turn to bet! (Guess how many tricks you will win, 0-13)\n"""
-            )
+        while True:
+            blind_bet = input("Do you wish to bet on the blind? (y/n):\n")
+            if blind_bet.lower() == "y" or "yes":
+                blind = True
+                break
+            elif blind_bet.lower() == "n" or "no":
+                blind = None
+                break
+            else:
+                print("Please answer with a \"y\" or \"n\".")
+                press_enter()
+                clear()
+                display_bets(player_bets, play_order)
+                continue
+        if blind:
+            bet = input(
+                """\nYour turn to bet! (Guess how many tricks you will win, 0-13)\n"""
+                )
+        else:
+            print("Your hand:")
+            graphical_hand(hand)
+            bet = input(
+                """\nYour turn to bet! (Guess how many tricks you will win, 0-13)\n"""
+                )
         if bet.lower() == "quit" or bet.lower() == "q":
             clear()
             print("Thanks for playing!")
@@ -378,12 +399,11 @@ def user_play_card(hand, trick_pool, play_order, spaded, first_card):
 
     if first_card:
         print("\nYour hand:")
-        matching_suit_cards_in_hand = [card for card in hand if find_suit(card) == first_card_suit]
-        graphical_hand(hand, matching_suit_cards_in_hand)
+        graphical_hand(hand, find_suit(first_card))
         user_card = card_formatter(input("\nWhich card would you like to play?\n"))
     else:
         print("\nYour hand:")
-        graphical_hand(hand, hand)
+        graphical_hand(hand)
         user_card = card_formatter(input("\nYou start the trick! Which card would you like to play?\n"))
     if user_card not in hand:
             clear()
@@ -456,7 +476,7 @@ def display_current_trick(trick_pool, player_hands, play_order):
         if trick_pool[players.index(player)]:
             play_order_pool.append(trick_pool[players.index(player)])
     if len(play_order_pool) > 0:
-        graphical_hand(play_order_pool, play_order_pool)
+        graphical_hand(play_order_pool)
 
 def get_scores(score, tricks, bets):
     round_scores = [0, 0, 0, 0]
@@ -551,9 +571,7 @@ def main():
         for i in range(4):
             if order[i] == "You":
                 print()
-                print("\nYour hand:")
-                graphical_hand(player_hands[0], player_hands[0])
-                player_bets[0] = get_bet()
+                player_bets[0] = get_bet(player_hands[0])
                 clear()
                 display_bets(player_bets, play_order)
                 wait()
