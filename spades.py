@@ -11,13 +11,12 @@ from graphical_card import graphical_hand
 
 """TO DO:
 make moar dictionaries
-enable users to bid on the blind
-update scoring to account for blind and nil bidding
+update scoring to account for nil bidding
 implement sleep
 make bot bids smarter (more realistic - they're bidding a little too high)
 make bot trick play smarter (look at played cards)
 general cleanup
-make errors less annoying
+make error messages less annoying
 (maybe display the message at the bottom and then refresh)
 """
 
@@ -75,18 +74,19 @@ rectangle = """
 def main_menu():
     while True:
         clear()
-        print("               /\\")
-        print("             /    \\")
-        print("           /        \\")
-        print("          |          |")
-        print("           `..``.``..`")
-        print("               .:.")
-        print("\n              SPADES")
-        print("          By Kenton Bandy")
-        print("               2019")
+        print("                 /\\")
+        print("               /    \\")
+        print("             /        \\")
+        print("            |          |")
+        print("             `..``.``..`")
+        print("                 .:.")
+        print("\n                SPADES")
+        print("         " + version)
+        print("            By Kenton Bandy")
+        print("                 2019")
         print("\nPlay a game of spades with your friends")
         print("    Yasmine, Florian, and Sakura.\n")
-        print("\nMain Menu:")
+        print("Main Menu:")
         print("\n1. Begin Game")
         print("2. How to Play (recommended for first time players)")
         print("3. Calibrate Window Size")
@@ -117,7 +117,11 @@ def main_menu():
             print(" round. Sandbagging")
             print("occurs when a player has 5 or more points in the", end="")
             print(" ones place of their")
-            print("total score, resulting in a loss of 55 points.")
+            print("total score, resulting in a loss of 55 points.", end="")
+            print(" Players who exactly")
+            print("match their blind bid win 100 extra points, with a", end="")
+            print(" 100 point penalty")
+            print("if they do not meet their blind bid.")
             print()
             print("Type \"q\" and press Enter to quit at any time.")
             practice()
@@ -132,15 +136,14 @@ def main_menu():
             print("              Acknowledgements:")
             print()
             print("Special thanks go to Travis and Brian for", end="")
-            print(" being very generous with")
-            print("their help, suggestions, code review, and positivity.")
+            print(" being very generous ")
+            print("with their help, suggestions, code review, and positivity.")
             print()
             print("Thanks to Brian (again) for creating the card graphics and")
             print("contributing to the code.")
             print("")
             print("Thanks to everyone who helped me develop this game", end="")
-            print(" by play testing it")
-            print("and offering feedback.")
+            print(" by play\ntesting it and offering feedback.")
             print("")
             print("Thank you, user, for playing the game!")
             press_enter()
@@ -488,14 +491,14 @@ def user_play_card(hand, trick_pool, play_order, spaded, first_card):
 def determine_winner(trick_pool, tricks_won, first_card):
     ts_deck = trick_score_deck(build_score_deck(), find_suit(first_card))
     score = [0, 0, 0, 0]
-    largest_score = 0
+    largest_score = -1000000000
     for card in trick_pool:
         for c in ts_deck:
             if card == c:
                 score[trick_pool.index(card)] = ts_deck.index(c)
     for num in score:
         if num > largest_score:
-            largest_score += num
+            largest_score = num
             winner = score.index(num)
     tricks_won[winner] += 1
     print(f"\n{players[winner]} won the trick!")
@@ -548,7 +551,6 @@ def display_current_trick(trick_pool, player_hands, play_order):
 def get_scores(score, tricks, bids, blind):
     round_scores = [0, 0, 0, 0]
     high_scorers = []
-    print()
     for i in range(4):
         key = players[i]
         base_num = bids[i] * 10
@@ -577,13 +579,14 @@ def get_scores(score, tricks, bids, blind):
                     print(f"{key} didn't meet their blind bid! Minus 100!")
         score[key] += round_scores[i]
         if score[key] % 10 >= 5:
-            if players[i] == "You":
+            score[key] -= 55
+            round_scores[i] -= 55
+            if key == "You":
                 print(f"You have sandbagged! Minus 55!")
                 wait()
             else:
-                print(f"{players[i]} has sandbagged! Minus 55!")
+                print(f"{key} has sandbagged! Minus 55!")
                 wait()
-            score[key] -= 55
     print("\nThis round's scores are as follows:")
     wait()
     for n in range(4):
@@ -618,7 +621,24 @@ def get_scores(score, tricks, bids, blind):
     return score, high_score
 
 
-version = "Spades version 0.0.1 (Alpha)"
+def declare_winner(scores):
+    game_winner = ""
+    high_score = 0
+    print("We have a winner! Here are the final scores:\n")
+    for player in players:
+        print(player + ": " + str(scores[player]))
+    for key in scores:
+        if scores[key] > high_score:
+            high_score = scores[key]
+            game_winner = key
+    clear()
+    if game_winner == "You":
+        print(f"\nYou win with a score of {high_score}!")
+    else:
+        print(f"\n{game_winner} wins with a score of {high_score}!")
+
+
+version = "Version 0.0.2 (Alpha)"
 players = ["You", "Yasmine", "Florian", "Sakura"]
 order = []
 main_deck = build_deck()
@@ -728,7 +748,12 @@ def main():
         round += 1
         order = order[1:] + order[:1]
         input("Press Enter to begin the next round!")
+    return scoreboard
 
-main()
+while True:
+    scoreboard = main()
+    declare_winner(scoreboard)
+    press_enter()
+
 
 print("\nThanks for playing!\n")
