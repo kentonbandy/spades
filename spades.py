@@ -17,54 +17,60 @@ implement sleep
 make bot bids smarter (more realistic - they're bidding a little too high)
 make bot trick play smarter (look at played cards)
 general cleanup
-make errors less annoying (maybe display the message at the bottom and then refresh)
+make errors less annoying
+(maybe display the message at the bottom and then refresh)
 """
 
 import signal
+
+
 def signal_handler(sig, frame):
         print('\nGoodbye!')
         quit()
 signal.signal(signal.SIGINT, signal_handler)
 
-def wait(seconds = 0.3):
+
+def wait(seconds=0.3):
     return
-    #time.sleep(seconds)
+    # time.sleep(seconds)
+
 
 def clear():
     """Clears the terminal screen."""
-    #sys.stdout.write('\033[2J\033[1;1H')
-    if platform.system().lower()=="windows":
+    if platform.system().lower() == "windows":
         os.system('cls')
     else:
         sys.stdout.write('\033[2J\033[1;1H')
 
 
-rectangle = """--------------------------------------------------------------------------------
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                Resize your window so that the edges of                       |
-|                this rectangle are visible and not                            |
-|                distorted for the best playing experience!                    |
-|                                                                              |
-|                                                                              |
-|                Press enter when you are done.                                |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
--------------------------------------------------------------------------------"""
-            
+rectangle = """
+-------------------------------------------------------------------------------
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                Resize your window so that the edges of                      |
+|                this rectangle are visible and not                           |
+|                distorted for the best playing experience!                   |
+|                                                                             |
+|                                                                             |
+|                Press enter when you are done.                               |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+------------------------------------------------------------------------------
+"""
+
 
 def main_menu():
     while True:
@@ -86,23 +92,31 @@ def main_menu():
         print("3. Calibrate Window Size")
         print("4. Acknowledgements")
         print("5. End Game")
-        prompt = input("\nWhat would you like to do? Enter the number of your choice:\n")
+        prompt = input(
+            "\nWhat would you like to do? Enter the number of your choice:\n")
         if prompt == "1":
             break
         elif prompt == "2":
             clear()
             print("How to Play:\n")
-            print("You will need to enter text inputs to play this game. All you need to")
-            print("do is follow the prompts to enter either the number of your bid or the")
+            print(
+                "You will need to enter text inputs to play this", end="")
+            print(" game. All you need to")
+            print("do is follow the prompts to enter either the", end="")
+            print(" number of your bid or the")
             print("card you want to play and press enter.")
             print()
             print("In this game, you can use shorthand to type your card:")
             print("Ace of Spades = \"as\", 10 of Hearts = \"10h\", etc.")
-            print("You can also type out the full name of the card if you wish.")
+            print("You can also type out the full name of the card", end="")
+            print(" if you wish.")
             print()
-            print("For the rules of Spades, just search Google for \"spades wikipedia\".")
-            print("In this variant, the first to 300 points wins the round. Sandbagging")
-            print("occurs when a player has 5 or more points in the ones place of their")
+            print("For the rules of Spades, just search Google", end="")
+            print(" for \"spades wikipedia\".")
+            print("In this variant, the first to 300 points wins the", end="")
+            print(" round. Sandbagging")
+            print("occurs when a player has 5 or more points in the", end="")
+            print(" ones place of their")
             print("total score, resulting in a loss of 55 points.")
             print()
             print("Type \"q\" and press Enter to quit at any time.")
@@ -117,18 +131,22 @@ def main_menu():
             clear()
             print("              Acknowledgements:")
             print()
-            print("Special thanks go to Travis and Brian for being very generous with")
+            print("Special thanks go to Travis and Brian for", end="")
+            print(" being very generous with")
             print("their help, suggestions, code review, and positivity.")
             print()
             print("Thanks to Brian (again) for creating the card graphics and")
             print("contributing to the code.")
             print("")
-            print("Thanks to everyone who helped me develop this game by play testing it")
+            print("Thanks to everyone who helped me develop this game", end="")
+            print(" by play testing it")
             print("and offering feedback.")
             print("")
             print("Thank you, user, for playing the game!")
             press_enter()
-        elif prompt == "5" or prompt.lower() == "quit" or prompt.lower() == "q":
+        elif (
+            prompt == "5" or prompt.lower() == "quit" or prompt.lower() == "q"
+                ):
             clear()
             print("Thanks for playing!")
             quit()
@@ -137,9 +155,11 @@ def main_menu():
             time.sleep(2)
             continue
 
+
 def practice():
     while True:
-        practice = input("\nLet's practice! Try playing the Jack of Diamonds.\n")
+        practice = input(
+            "\nLet's practice! Try playing the Jack of Diamonds.\n")
         if practice.lower() == "jd" or practice.lower() == "jack of diamonds":
             print("\nWell done! Now you're ready to play.")
             time.sleep(2)
@@ -149,12 +169,15 @@ def practice():
             print("Thanks for playing!")
             quit()
         else:
-            print("\nThat didn't work! Try again, being careful to type the card or shorthand correctly.")
+            print("\nThat didn't work! Try again, being careful", end="")
+            print(" to type the card or shorthand correctly.")
             wait()
             continue
 
+
 def press_enter():
     input("\nPress enter when you are ready to continue.")
+
 
 def build_deck():
     """Creates and returns a standard deck of cards in an ordered list"""
@@ -167,8 +190,9 @@ def build_deck():
             deck.append(f"{value} of {suit}")
     return deck
 
+
 def build_score_deck():
-    """Creates and returns a standard deck of cards in order of card strength"""
+    """Creates and returns a standard deck of cards in order of strength"""
     card_values = list(range(2, 11))
     card_values.extend(["Jack", "Queen", "King", "Ace"])
     suits = ["Clubs", "Diamonds", "Hearts"]
@@ -179,6 +203,7 @@ def build_score_deck():
     for value in card_values:
         score_deck.append(f"{value} of Spades")
     return score_deck
+
 
 def build_shorthand(deck):
     shorthand_list = []
@@ -192,11 +217,13 @@ def build_shorthand(deck):
             shorthand_list.append(f"{val[0]}{suit[0]}".lower())
     return shorthand_list
 
+
 def build_shorthand_dict(sh_list, deck):
     sh_dict = {}
     for i in range(52):
         sh_dict[sh_list[i]] = deck[i]
     return sh_dict
+
 
 def shuffle_deck(deck):
     """Returns a shuffled deck made up of cards from the given deck"""
@@ -204,6 +231,7 @@ def shuffle_deck(deck):
     shuffled_deck = deck[:]
     random.shuffle(shuffled_deck)
     return(shuffled_deck)
+
 
 def deal_cards(shuffled_deck):
     """Returns a hand of 13 cards each to four players from a shuffled deck"""
@@ -215,6 +243,7 @@ def deal_cards(shuffled_deck):
     hands[3] = shuffled_deck[39:]
     return hands
 
+
 def sort_hand(hand, deck):
     """Returns a hand of cards sorted in the index order of the given deck"""
     sorted_hand = []
@@ -224,6 +253,7 @@ def sort_hand(hand, deck):
                 sorted_hand.append(card)
     return sorted_hand
 
+
 def get_bid(hand, player_bids, play_order, blind):
     """Returns the user's bid"""
     while True:
@@ -231,10 +261,10 @@ def get_bid(hand, player_bids, play_order, blind):
         while True:
             blind_bid = input("Do you wish to bid on the blind? (y/n):\n")
             if blind_bid.lower() == "y" or blind_bid.lower() == "yes":
-                blind["You"]=True
+                blind["You"] = True
                 break
             elif blind_bid.lower() == "n" or blind_bid.lower() == "no":
-                blind["You"]=False
+                blind["You"] = False
                 break
             else:
                 print("Please answer with a \"y\" or \"n\".")
@@ -242,16 +272,14 @@ def get_bid(hand, player_bids, play_order, blind):
                 clear()
                 display_bids(player_bids, play_order)
                 continue
+        message = "Your turn to bid! (guess how many tricks"
+        message += " you will win, 0-13)\n"
         if blind["You"] is True:
-            bid = input(
-                """\nYour turn to bid! (Guess how many tricks you will win, 0-13)\n"""
-                )
+            bid = input(message)
         else:
             print("Your hand:")
             graphical_hand(hand)
-            bid = input(
-                """\nYour turn to bid! (Guess how many tricks you will win, 0-13)\n"""
-                )
+            bid = input(message)
         if bid.lower() == "quit" or bid.lower() == "q":
             clear()
             print("Thanks for playing!")
@@ -270,6 +298,7 @@ def get_bid(hand, player_bids, play_order, blind):
             time.sleep(1)
             continue
 
+
 def bot_bid(bot_hand):
     """Returns a bid for one of the bots"""
     score = 0
@@ -281,13 +310,15 @@ def bot_bid(bot_hand):
         if ("Queen" in card) or ("Jack" in card):
             score += 2
     return int(score / 3) + 1
-        
+
+
 def get_order(round, players, offset):
     """Returns an order of players."""
     new_order = []
     new_order.extend(players[offset + round - 1:])
     new_order.extend(players[:offset + round - 1])
     return new_order
+
 
 def display_bids(player_bids, play_order):
     clear()
@@ -309,13 +340,15 @@ def find_suit(card):
         if suit in card:
             return suit
 
+
 def remove_spades(hand):
     """Returns a hand with the Spades removed."""
-    spadeless_hand = hand [:]
+    spadeless_hand = hand[:]
     for card in hand:
         if "Spades" in card:
             spadeless_hand.remove(card)
     return spadeless_hand
+
 
 def trick_score_deck(deck, suit):
     """Returns a list of cards in score order with irrelevant suits removed."""
@@ -326,25 +359,32 @@ def trick_score_deck(deck, suit):
         ts_deck.extend([card for card in deck if find_suit(card) == "Spades"])
         return ts_deck
 
+
 def play_spade(user_card, hand, trick_pool, spaded, first_card):
     """Returns True if the card is a non-playable Spade"""
     hand_suits = [find_suit(card) for card in hand]
     if "Spades" not in user_card:
         return None
-    elif first_card and ("Spades" not in first_card) and (find_suit(first_card) in hand_suits):
+    elif (
+        first_card and (
+            "Spades" not in first_card) and (
+                find_suit(first_card) in hand_suits)):
         clear()
-        print("\nYou cannot play a Spade if you can play the suit of the opening card.")
+        print("\nYou cannot play a Spade if you can play the", end="")
+        print(" suit of the opening card.")
         print("Try playing a card in the same suit as the opening card.")
         return True
-    elif (first_card == "") and (spaded == False):
+    elif (first_card == "") and (spaded is False):
         for suit in hand_suits:
             if suit != "Spades":
                 clear()
-                print("You cannot open with a Spade if you have non-Spade cards and Spades have not been broken.")
+                print("You cannot open with a Spade if you have", end="")
+                print(" non-Spade cards and Spades have not been broken.")
                 print("Try a non-spade card in your hand.")
                 return True
     else:
         return None
+
 
 def bot_play_card(hand, trick_pool, bid, tricks, spaded, first_card):
     """Returns a card from the current bot's hand"""
@@ -354,7 +394,7 @@ def bot_play_card(hand, trick_pool, bid, tricks, spaded, first_card):
     hand_suits = [find_suit(card) for card in hand]
     first_suit = find_suit(first_card)
     if not first_card:
-        if spaded == False:
+        if spaded is False:
             if spadeless_hand:
                 if tricks < bid:
                     return spadeless_hand[-1]
@@ -378,7 +418,7 @@ def bot_play_card(hand, trick_pool, bid, tricks, spaded, first_card):
                 return suited_hand[-1]
             else:
                 return suited_hand[0]
-        elif spaded == True:
+        elif spaded is True:
             if tricks < bid:
                 return scored_hand[-1]
             else:
@@ -391,6 +431,7 @@ def bot_play_card(hand, trick_pool, bid, tricks, spaded, first_card):
                     return spadeless_hand[0]
             else:
                 return scored_hand[0]
+
 
 def card_formatter(card):
     if card.lower() == "quit" or card.lower() == "q":
@@ -409,19 +450,22 @@ def card_formatter(card):
     else:
         return None
 
+
 def user_play_card(hand, trick_pool, play_order, spaded, first_card):
-    """Prompts the user to play a card, checks whether the played card is legal, and returns the card."""
+    """Prompts the user to play a card"""
     first_card_suit = find_suit(first_card)
     hand_suits = [find_suit(card) for card in hand]
 
     if first_card:
         print("\nYour hand:")
         graphical_hand(hand, find_suit(first_card))
-        user_card = card_formatter(input("\nWhich card would you like to play?\n"))
+        user_card = card_formatter(input(
+            "\nWhich card would you like to play?\n"))
     else:
         print("\nYour hand:")
         graphical_hand(hand)
-        user_card = card_formatter(input("\nYou start the trick! Which card would you like to play?\n"))
+        user_card = card_formatter(input(
+            "\nYou start the trick! Which card would you like to play?\n"))
     if user_card not in hand:
             clear()
             print("\nPlease choose a card in your hand!")
@@ -434,10 +478,12 @@ def user_play_card(hand, trick_pool, play_order, spaded, first_card):
         return ""
     elif first_card_suit != find_suit(user_card):
         if first_card_suit in hand_suits:
-            print("You have to play the same suit as the opening card if possible.")
+            print("You have to play the same suit as the", end="")
+            print(" opening card if possible.")
             press_enter()
             return ""
     return user_card
+
 
 def determine_winner(trick_pool, tricks_won, first_card):
     ts_deck = trick_score_deck(build_score_deck(), find_suit(first_card))
@@ -457,6 +503,7 @@ def determine_winner(trick_pool, tricks_won, first_card):
     print("\n...")
     return tricks_won, winner
 
+
 def display_tricks_won(tricks_won, player_bids):
     for n in range(4):
         if players[n] == "You":
@@ -469,9 +516,11 @@ def display_tricks_won(tricks_won, player_bids):
             tri = "trick"
         else:
             tri = "tricks"
-        print(f"{players[n].rjust(7)} {hav} won {tricks_won[n]} {tri} and {nee} {player_bids[n]}.")
+        print(f"{players[n].rjust(7)} {hav} won {tricks_won[n]} {tri}", end="")
+        print(f" and {nee} {player_bids[n]}.")
         wait(0.1)
     print()
+
 
 def display_current_trick(trick_pool, player_hands, play_order):
     print(f"Trick {14 - len(player_hands[0])}/13:\n")
@@ -494,6 +543,7 @@ def display_current_trick(trick_pool, player_hands, play_order):
             play_order_pool.append(trick_pool[players.index(player)])
     if len(play_order_pool) > 0:
         graphical_hand(play_order_pool)
+
 
 def get_scores(score, tricks, bids, blind):
     round_scores = [0, 0, 0, 0]
@@ -557,13 +607,16 @@ def get_scores(score, tricks, bids, blind):
         else:
             print(f"\n{high_scorers[0]} is in the lead!")
     elif len(high_scorers) == 2:
-        print(f"\n{high_scorers[0]} and {high_scorers[1]} are tied for the lead!")
+        print(f"\n{high_scorers[0]} and {high_scorers[1]} are", end="")
+        print(" tied for the lead!")
     elif len(high_scorers) == 3:
-        print(f"\n{high_scorers[0]}, {high_scorers[1]}, and {high_scorers[2]} are tied for the lead!")
+        print(f"\n{high_scorers[0]}, {high_scorers[1]},", end="")
+        print(f" and {high_scorers[2]} are tied for the lead!")
     elif len(high_scorers) == 4:
         print("\nEveryone is tied for the lead!")
     wait(1)
     return score, high_score
+
 
 version = "Spades version 0.0.1 (Alpha)"
 players = ["You", "Yasmine", "Florian", "Sakura"]
@@ -572,19 +625,20 @@ main_deck = build_deck()
 sh_list = build_shorthand(main_deck)
 sh_dict = build_shorthand_dict(sh_list, main_deck)
 
+
 def main():
     """Main body of the program"""
     main_menu()
     round = 1
-    offset = random.randint(0,3)
+    offset = random.randint(0, 3)
     order = get_order(round, players, offset)
-    play_order = order [:]
+    play_order = order[:]
     scoreboard = {"You": 0, "Yasmine": 0, "Florian": 0, "Sakura": 0}
     blind = {"You": False, "Yasmine": False, "Florian": False, "Sakura": False}
     highest_score = 0
 
     while highest_score < 300:
-        #Performs one round of Spades
+        # Performs one round of Spades
         clear()
         print(f"Beginning round {round}!")
         wait(0.5)
@@ -596,13 +650,14 @@ def main():
         player_hands[0] = sort_hand(player_hands[0], main_deck)
         print("\n...")
         wait()
-        #while True:
+        # while True:
         player_bids = [-1, -1, -1, -1]
         display_bids(player_bids, play_order)
         for i in range(4):
             if order[i] == "You":
                 print()
-                player_bids[0], blind = get_bid(player_hands[0], player_bids, play_order, blind)
+                player_bids[0], blind = (
+                    get_bid(player_hands[0], player_bids, play_order, blind))
                 clear()
                 display_bids(player_bids, play_order)
                 wait()
@@ -615,13 +670,13 @@ def main():
         print("\n...\n")
         wait(1)
         spaded = False
-        #trick_pool and tricks_won order is static: [user, yasmine, florian, sakura]
+# trick_pool and tricks_won order are static: [user, yasmine, florian, sakura]
         tricks_won = [0, 0, 0, 0]
         clear()
         display_tricks_won(tricks_won, player_bids)
 
         while player_hands[0]:
-            #Initiates a trick for each card in players' hands
+            # Initiates a trick for each card in players' hands
             trick_pool = ["", "", "", ""]
             first_card = ""
             print(f"\nTrick {14 - len(player_hands[0])}/13:\n")
@@ -631,8 +686,12 @@ def main():
                     while trick_pool[0] == "":
                         clear()
                         display_tricks_won(tricks_won, player_bids)
-                        display_current_trick(trick_pool, player_hands, play_order)
-                        trick_pool[0] = user_play_card(player_hands[0], trick_pool, play_order, spaded, first_card)
+                        display_current_trick(
+                            trick_pool, player_hands, play_order)
+                        trick_pool[0] = (
+                            user_play_card(player_hands[0], trick_pool,
+                                           play_order, spaded, first_card)
+                                            )
                     player_hands[0].remove(trick_pool[0])
                     if "Spades" in trick_pool[0]:
                         spaded = True
@@ -641,7 +700,12 @@ def main():
                     display_tricks_won(tricks_won, player_bids)
                     display_current_trick(trick_pool, player_hands, play_order)
                     index = players.index(player)
-                    trick_pool[index] = bot_play_card(player_hands[index], trick_pool, player_bids[index], tricks_won[index], spaded, first_card)
+                    trick_pool[index] = (
+                        bot_play_card(player_hands[index], trick_pool,
+                                      player_bids[index],
+                                      tricks_won[index], spaded,
+                                      first_card)
+                                        )
                     player_hands[index].remove(trick_pool[index])
                     if "Spades" in trick_pool[index]:
                         spaded = True
@@ -651,14 +715,16 @@ def main():
                 if player == play_order[0]:
                         first_card = trick_pool[players.index(player)]
             wait()
-            tricks_won, winner = determine_winner(trick_pool, tricks_won, first_card)
+            tricks_won, winner = (
+                determine_winner(trick_pool, tricks_won, first_card))
             press_enter()
             clear()
             display_tricks_won(tricks_won, player_bids)
             winner_name = players[winner]
             win_ind = play_order.index(winner_name)
             play_order = play_order[win_ind:] + play_order[:win_ind]
-        scoreboard, highest_score = get_scores(scoreboard, tricks_won, player_bids, blind)
+        scoreboard, highest_score = (
+            get_scores(scoreboard, tricks_won, player_bids, blind))
         round += 1
         order = order[1:] + order[:1]
         input("Press Enter to begin the next round!")
