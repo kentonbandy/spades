@@ -151,7 +151,7 @@ def main_menu():
             prompt == "5" or prompt.lower() == "quit" or prompt.lower() == "q"
                 ):
             clear()
-            print("Thanks for playing!")
+            print("Thanks for playing!\n\n\n\n\n")
             quit()
         else:
             print("\nPlease enter the number of your choice (1, 2, or 3).")
@@ -169,7 +169,7 @@ def practice():
             break
         elif practice.lower() == "quit" or practice.lower() == "q":
             clear()
-            print("Thanks for playing!")
+            print("Thanks for playing!\n\n\n\n\n")
             quit()
         else:
             print("\nThat didn't work! Try again, being careful", end="")
@@ -269,6 +269,10 @@ def get_bid(hand, player_bids, play_order, blind):
             elif blind_bid.lower() == "n" or blind_bid.lower() == "no":
                 blind["You"] = False
                 break
+            elif blind_bid.lower() == "q" or blind_bid.lower() -- "quit":
+                clear()
+                print("Thanks for playing!\n\n\n\n\n")
+                quit()
             else:
                 print("Please answer with a \"y\" or \"n\".")
                 press_enter()
@@ -285,7 +289,7 @@ def get_bid(hand, player_bids, play_order, blind):
             bid = input(message)
         if bid.lower() == "quit" or bid.lower() == "q":
             clear()
-            print("Thanks for playing!")
+            print("Thanks for playing!\n\n\n\n\n")
             quit()
         try:
             num = int(bid)
@@ -439,7 +443,7 @@ def bot_play_card(hand, trick_pool, bid, tricks, spaded, first_card):
 def card_formatter(card):
     if card.lower() == "quit" or card.lower() == "q":
         clear()
-        print("Thanks for playing!")
+        print("Thanks for playing!\n\n\n\n\n")
         quit()
     elif card in sh_list:
         formatted_card = sh_dict[card]
@@ -756,4 +760,4 @@ while True:
     press_enter()
 
 
-print("\nThanks for playing!\n")
+print("\nThanks for playing!\n\n\n\n\n")
