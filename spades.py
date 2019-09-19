@@ -269,7 +269,7 @@ def get_bid(hand, player_bids, play_order, blind):
             elif blind_bid.lower() == "n" or blind_bid.lower() == "no":
                 blind["You"] = False
                 break
-            elif blind_bid.lower() == "q" or blind_bid.lower() -- "quit":
+            elif blind_bid.lower() == "q" or blind_bid.lower() == "quit":
                 clear()
                 print("Thanks for playing!\n\n\n\n\n")
                 quit()
