@@ -10,7 +10,6 @@ import textwrap
 from graphical_card import graphical_hand
 
 """TO DO:
-make moar dictionaries
 update scoring to account for nil bidding
 implement sleep
 make bot bids smarter (more realistic - they're bidding a little too high)
@@ -259,26 +258,26 @@ def sort_hand(hand, deck):
 
 def get_bid(hand, player_bids, play_order, blind):
     """Returns the user's bid"""
+    error = "\nPlease give a number from 0 to 13!\n"
     while True:
-        error = "\nPlease give a number from 0 to 13!\n"
-        while True:
-            blind_bid = input("Do you wish to bid on the blind? (y/n):\n")
-            if blind_bid.lower() == "y" or blind_bid.lower() == "yes":
-                blind["You"] = True
-                break
-            elif blind_bid.lower() == "n" or blind_bid.lower() == "no":
-                blind["You"] = False
-                break
-            elif blind_bid.lower() == "q" or blind_bid.lower() == "quit":
-                clear()
-                print("Thanks for playing!\n\n\n\n\n")
-                quit()
-            else:
-                print("Please answer with a \"y\" or \"n\".")
-                press_enter()
-                clear()
-                display_bids(player_bids, play_order)
-                continue
+        blind_bid = input("Do you wish to bid on the blind? (y/n):\n")
+        if blind_bid.lower() == "y" or blind_bid.lower() == "yes":
+            blind["You"] = True
+            break
+        elif blind_bid.lower() == "n" or blind_bid.lower() == "no":
+            blind["You"] = False
+            break
+        elif blind_bid.lower() == "q" or blind_bid.lower() == "quit":
+            clear()
+            print("Thanks for playing!\n\n\n\n\n")
+            quit()
+        else:
+            print("Please answer with a \"y\" or \"n\".")
+            press_enter()
+            display_bids(player_bids, play_order, blind)
+            continue
+    while True:
+        display_bids(player_bids, play_order, blind)
         message = "Your turn to bid! (guess how many tricks"
         message += " you will win, 0-13)\n"
         if blind["You"] is True:
@@ -296,7 +295,6 @@ def get_bid(hand, player_bids, play_order, blind):
         except ValueError:
             print(error)
             time.sleep(1)
-
             continue
         if (num >= 0) and (num <= 13):
             return num, blind
@@ -306,17 +304,24 @@ def get_bid(hand, player_bids, play_order, blind):
             continue
 
 
-def bot_bid(bot_hand):
+def bot_bid(bot_hand, blind, player):
     """Returns a bid for one of the bots"""
     score = 0
-    for card in bot_hand:
-        if ("Ace" in card) or ("King" in card):
-            score += 3
-        if "Spades" in card:
-            score += 0.25
-        if ("Queen" in card) or ("Jack" in card):
-            score += 2
-    return int(score / 3) + 1
+    roll = random.randint(0, 7)
+    if roll == 5:
+        rand = random.randint(0, 5)
+        score = rand * 3
+        blind[player] = True
+    else:
+        for card in bot_hand:
+            if "Ace" in card or "King" in card:
+                score += 3
+            if "Spades" in card:
+                score += 0.25
+            if "Queen" in card or "Jack" in card:
+                score += 2
+            blind[player] = False
+    return int(score / 3), blind
 
 
 def get_order(round, players, offset):
@@ -327,7 +332,7 @@ def get_order(round, players, offset):
     return new_order
 
 
-def display_bids(player_bids, play_order):
+def display_bids(player_bids, play_order, blind):
     clear()
     print("Let's place some bids! How many books will you win this round?\n")
     if play_order[0] == "You":
@@ -337,7 +342,12 @@ def display_bids(player_bids, play_order):
     for player in play_order:
         ind = players.index(player)
         if player_bids[ind] > -1:
-            print(f"{players[ind].rjust(7)} bid {player_bids[ind]} tricks.")
+            p = players[ind].rjust(7)
+            if blind[player] is False:
+                print(f"{p} bid {player_bids[ind]} tricks."
+                      )
+            else:
+                print(f"{p} bid {player_bids[ind]} tricks on the blind!")
 
 
 def find_suit(card):
@@ -441,14 +451,15 @@ def bot_play_card(hand, trick_pool, bid, tricks, spaded, first_card):
 
 
 def card_formatter(card):
-    if card.lower() == "quit" or card.lower() == "q":
+    card = card.lower()
+    if card == "quit" or card == "q":
         clear()
         print("Thanks for playing!\n\n\n\n\n")
         quit()
     elif card in sh_list:
         formatted_card = sh_dict[card]
         return formatted_card
-    elif card.lower() in [i.lower() for i in main_deck]:
+    elif card in [i.lower() for i in main_deck]:
         card_lst = card.split()
         n = card_lst[0]
         s = card_lst[2]
@@ -511,7 +522,8 @@ def determine_winner(trick_pool, tricks_won, first_card):
     return tricks_won, winner
 
 
-def display_tricks_won(tricks_won, player_bids):
+def display_tricks_won(tricks_won, player_bids, blind):
+    clear()
     for n in range(4):
         if players[n] == "You":
             hav = "have"
@@ -523,9 +535,12 @@ def display_tricks_won(tricks_won, player_bids):
             tri = "trick"
         else:
             tri = "tricks"
-        print(f"{players[n].rjust(7)} {hav} won {tricks_won[n]} {tri}", end="")
-        print(f" and {nee} {player_bids[n]}.")
-        wait(0.1)
+        if blind[players[n]] is True:
+            print(f"{players[n].rjust(7)} {hav} won {tricks_won[n]}", end="")
+            print(f" {tri} and {nee} {player_bids[n]}. (Blind)")
+        else:
+            print(f"{players[n].rjust(7)} {hav} won {tricks_won[n]}", end="")
+            print(f" {tri} and {nee} {player_bids[n]}.")
     print()
 
 
@@ -607,7 +622,6 @@ def get_scores(score, tricks, bids, blind):
         key = players[n]
         if score[key] == high_score:
             high_scorers.append(players[n])
-    wait(1)
     if len(high_scorers) == 1:
         if high_scorers[0] == "You":
             print(f"\n{high_scorers[0]} are in the lead!")
@@ -621,7 +635,6 @@ def get_scores(score, tricks, bids, blind):
         print(f" and {high_scorers[2]} are tied for the lead!")
     elif len(high_scorers) == 4:
         print("\nEveryone is tied for the lead!")
-    wait(1)
     return score, high_score
 
 
@@ -674,30 +687,28 @@ def main():
         player_hands[0] = sort_hand(player_hands[0], main_deck)
         print("\n...")
         wait()
-        # while True:
         player_bids = [-1, -1, -1, -1]
-        display_bids(player_bids, play_order)
+        display_bids(player_bids, play_order, blind)
         for i in range(4):
             if order[i] == "You":
                 print()
                 player_bids[0], blind = (
                     get_bid(player_hands[0], player_bids, play_order, blind))
                 clear()
-                display_bids(player_bids, play_order)
-                wait()
+                display_bids(player_bids, play_order, blind)
             else:
                 ind = players.index(order[i])
-                player_bids[ind] = bot_bid(player_hands[ind])
-                display_bids(player_bids, play_order)
-                wait()
+                player_bids[ind], blind = bot_bid(
+                    player_hands[ind], blind, players[ind]
+                                            )
+                display_bids(player_bids, play_order, blind)
         wait()
         print("\n...\n")
-        wait(1)
         spaded = False
 # trick_pool and tricks_won order are static: [user, yasmine, florian, sakura]
         tricks_won = [0, 0, 0, 0]
         clear()
-        display_tricks_won(tricks_won, player_bids)
+        display_tricks_won(tricks_won, player_bids, blind)
 
         while player_hands[0]:
             # Initiates a trick for each card in players' hands
@@ -705,11 +716,9 @@ def main():
             first_card = ""
             print(f"\nTrick {14 - len(player_hands[0])}/13:\n")
             for player in play_order:
-                wait()
                 if player == "You":
                     while trick_pool[0] == "":
-                        clear()
-                        display_tricks_won(tricks_won, player_bids)
+                        display_tricks_won(tricks_won, player_bids, blind)
                         display_current_trick(
                             trick_pool, player_hands, play_order)
                         trick_pool[0] = (
@@ -720,8 +729,7 @@ def main():
                     if "Spades" in trick_pool[0]:
                         spaded = True
                 else:
-                    clear()
-                    display_tricks_won(tricks_won, player_bids)
+                    display_tricks_won(tricks_won, player_bids, blind)
                     display_current_trick(trick_pool, player_hands, play_order)
                     index = players.index(player)
                     trick_pool[index] = (
@@ -734,7 +742,7 @@ def main():
                     if "Spades" in trick_pool[index]:
                         spaded = True
                 clear()
-                display_tricks_won(tricks_won, player_bids)
+                display_tricks_won(tricks_won, player_bids, blind)
                 display_current_trick(trick_pool, player_hands, play_order)
                 if player == play_order[0]:
                         first_card = trick_pool[players.index(player)]
@@ -743,7 +751,7 @@ def main():
                 determine_winner(trick_pool, tricks_won, first_card))
             press_enter()
             clear()
-            display_tricks_won(tricks_won, player_bids)
+            display_tricks_won(tricks_won, player_bids, blind)
             winner_name = players[winner]
             win_ind = play_order.index(winner_name)
             play_order = play_order[win_ind:] + play_order[:win_ind]
