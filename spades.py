@@ -6,39 +6,16 @@ import subprocess
 import sys
 import os
 import textwrap
+import signal
 
 from graphical_card import graphical_hand
 
 """TO DO:
-update scoring to account for nil bidding
-implement sleep
 make bot bids smarter (more realistic - they're bidding a little too high)
 make bot trick play smarter (look at played cards)
-general cleanup
 make error messages less annoying
 (maybe display the message at the bottom and then refresh)
 """
-
-import signal
-
-
-def signal_handler(sig, frame):
-        print('\nGoodbye!')
-        quit()
-signal.signal(signal.SIGINT, signal_handler)
-
-
-def wait(seconds=0.3):
-    return
-    # time.sleep(seconds)
-
-
-def clear():
-    """Clears the terminal screen."""
-    if platform.system().lower() == "windows":
-        os.system('cls')
-    else:
-        sys.stdout.write('\033[2J\033[1;1H')
 
 
 rectangle = """
@@ -69,60 +46,102 @@ rectangle = """
 ------------------------------------------------------------------------------
 """
 
+menu = """
+                 /\\
+               /    \\
+             /        \\
+            |          |
+             `..``.``..`
+                 .:.
+
+                SPADES
+
+            By Kenton Bandy
+                 2019
+
+Play a game of spades with your friends
+    Yasmine, Florian, and Sakura.
+
+Main Menu:
+
+1. Begin Game
+2. How to Play (recommended for first time players)
+3. Calibrate Window Size
+4. Acknowledgements
+5. End Game
+"""
+
+howtoplay = """
+
+How to Play:
+
+You will need to enter text inputs to play this game. All you need to
+do is follow the prompts to enter either the number of your bid or the
+card you want to play and press enter.
+
+In this game, you can use shorthand to type your card:
+Ace of Spades = "as", 10 of Hearts = "10h", etc. You can also type out
+the full name of the card if you wish.
+
+For the rules of Spades, just search Google for "spades wikipedia". In
+this variant there are no teams - you are playing by yourself. The
+first to 300 points wins the round. Sandbagging occurs when a player
+has 5 or more points in the ones place of their total score, resulting
+in a loss of 55 points. Players who exactly match their blind bid win
+100 extra points, with a 100 point penalty if they do not meet their
+blind bid.
+
+Type "q" and press Enter to quit at any time.
+"""
+
+acknowledgements = """
+              Acknowledgements:
+
+Special thanks go to Travis and Brian for being very generous with
+their help, suggestions, code review, and positivity.
+
+Thanks to Brian (again) for creating the card graphics and contributing
+to the code.
+
+Thanks to everyone who helped me develop this game by play testing it
+and offering feedback.
+
+Thank you, user, for playing the game!
+"""
+
+
+def signal_handler(sig, frame):
+    print('\nGoodbye!')
+    quit()
+
+
+signal.signal(signal.SIGINT, signal_handler)
+
+
+def clear():
+    """Clears the terminal screen."""
+    if platform.system().lower() == "windows":
+        os.system('cls')
+    else:
+        sys.stdout.write('\033[2J\033[1;1H')
+
+
+def wait(seconds=0.3):
+    # return
+    time.sleep(seconds)
+
 
 def main_menu():
     while True:
         clear()
-        print("                 /\\")
-        print("               /    \\")
-        print("             /        \\")
-        print("            |          |")
-        print("             `..``.``..`")
-        print("                 .:.")
-        print("\n                SPADES")
-        print("         " + version)
-        print("            By Kenton Bandy")
-        print("                 2019")
-        print("\nPlay a game of spades with your friends")
-        print("    Yasmine, Florian, and Sakura.\n")
-        print("Main Menu:")
-        print("\n1. Begin Game")
-        print("2. How to Play (recommended for first time players)")
-        print("3. Calibrate Window Size")
-        print("4. Acknowledgements")
-        print("5. End Game")
+        print(menu)
         prompt = input(
             "\nWhat would you like to do? Enter the number of your choice:\n")
         if prompt == "1":
             break
         elif prompt == "2":
             clear()
-            print("How to Play:\n")
-            print(
-                "You will need to enter text inputs to play this", end="")
-            print(" game. All you need to")
-            print("do is follow the prompts to enter either the", end="")
-            print(" number of your bid or the")
-            print("card you want to play and press enter.")
-            print()
-            print("In this game, you can use shorthand to type your card:")
-            print("Ace of Spades = \"as\", 10 of Hearts = \"10h\", etc.")
-            print("You can also type out the full name of the card", end="")
-            print(" if you wish.")
-            print()
-            print("For the rules of Spades, just search Google", end="")
-            print(" for \"spades wikipedia\".")
-            print("In this variant, the first to 300 points wins the", end="")
-            print(" round. Sandbagging")
-            print("occurs when a player has 5 or more points in the", end="")
-            print(" ones place of their")
-            print("total score, resulting in a loss of 55 points.", end="")
-            print(" Players who exactly")
-            print("match their blind bid win 100 extra points, with a", end="")
-            print(" 100 point penalty")
-            print("if they do not meet their blind bid.")
-            print()
-            print("Type \"q\" and press Enter to quit at any time.")
+            print(howtoplay)
             practice()
             continue
         elif prompt == "3":
@@ -132,36 +151,23 @@ def main_menu():
             continue
         elif prompt == "4":
             clear()
-            print("              Acknowledgements:")
-            print()
-            print("Special thanks go to Travis and Brian for", end="")
-            print(" being very generous ")
-            print("with their help, suggestions, code review, and positivity.")
-            print()
-            print("Thanks to Brian (again) for creating the card graphics and")
-            print("contributing to the code.")
-            print("")
-            print("Thanks to everyone who helped me develop this game", end="")
-            print(" by play\ntesting it and offering feedback.")
-            print("")
-            print("Thank you, user, for playing the game!")
+            print(acknowledgements)
             press_enter()
-        elif (
-            prompt == "5" or prompt.lower() == "quit" or prompt.lower() == "q"
-                ):
-            clear()
-            print("Thanks for playing!\n\n\n\n\n")
-            quit()
+        elif (prompt == "5" or
+                prompt.lower() == "quit" or
+                prompt.lower() == "q"):
+                clear()
+                print("Thanks for playing!\n\n\n\n\n")
+                quit()
         else:
-            print("\nPlease enter the number of your choice (1, 2, or 3).")
+            print("\nPlease enter the number of your choice (1 - 5).")
             time.sleep(2)
             continue
 
 
 def practice():
     while True:
-        practice = input(
-            "\nLet's practice! Try playing the Jack of Diamonds.\n")
+        practice = input("\nLet's practice! Try playing the Jack of Diamonds.\n")
         if practice.lower() == "jd" or practice.lower() == "jack of diamonds":
             print("\nWell done! Now you're ready to play.")
             time.sleep(2)
@@ -173,7 +179,7 @@ def practice():
         else:
             print("\nThat didn't work! Try again, being careful", end="")
             print(" to type the card or shorthand correctly.")
-            wait()
+            time.sleep(2)
             continue
 
 
@@ -208,11 +214,12 @@ def build_score_deck():
 
 
 def build_shorthand(deck):
+    """creates a list of shorthand notation (Queen of Clubs == qc)"""
     shorthand_list = []
     for card in deck:
-        n = card.split()
-        val = n[0]
-        suit = n[2]
+        c_lst = card.split()
+        val = c_lst[0]
+        suit = c_lst[2]
         if val == "10":
             shorthand_list.append(f"{val}{suit[0]}".lower())
         else:
@@ -221,6 +228,7 @@ def build_shorthand(deck):
 
 
 def build_shorthand_dict(sh_list, deck):
+    """creates a dictionary for conversion from shorthand to standard notation"""
     sh_dict = {}
     for i in range(52):
         sh_dict[sh_list[i]] = deck[i]
@@ -229,7 +237,7 @@ def build_shorthand_dict(sh_list, deck):
 
 def shuffle_deck(deck):
     """Returns a shuffled deck made up of cards from the given deck"""
-    print("\nShuffling the deck!")
+    # print("\nShuffling the deck!")
     shuffled_deck = deck[:]
     random.shuffle(shuffled_deck)
     return(shuffled_deck)
@@ -249,9 +257,9 @@ def deal_cards(shuffled_deck):
 def sort_hand(hand, deck):
     """Returns a hand of cards sorted in the index order of the given deck"""
     sorted_hand = []
-    for index in deck:
+    for i in deck:
         for card in hand:
-            if index == card:
+            if i == card:
                 sorted_hand.append(card)
     return sorted_hand
 
@@ -762,10 +770,11 @@ def main():
         input("Press Enter to begin the next round!")
     return scoreboard
 
-while True:
-    scoreboard = main()
-    declare_winner(scoreboard)
-    press_enter()
+if __name__ == "__main__":
+    while True:
+        scoreboard = main()
+        declare_winner(scoreboard)
+        press_enter()
 
 
-print("\nThanks for playing!\n\n\n\n\n")
+# print("\nThanks for playing!\n\n\n\n\n")
