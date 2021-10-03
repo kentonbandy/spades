@@ -37,7 +37,7 @@ blind bid.
 - During each round, the game keeps track of and displays the running count of tricks won for each player:  
 ![Trick score and raised cards](docs/images/scorekeeping_raised_cards.png)
 
-- The game doesn't allow the user to make illegal plays and provides helpful, appropriate error messages:
+- All input is validated and case insensitive. The game doesn't allow the user to make illegal plays and provides helpful, appropriate error messages:
 
 ![Error message](docs/images/error_message.png)
 
@@ -48,7 +48,6 @@ blind bid.
 
 
 - The user can type "q" or "quit" at any time to end the program.
-- All user input is case insensitive.
 
 ## Running Spades
 Spades can be played from any command line interface (Windows, Mac, and Linux) while Python 3 is installed along with the following libraries:  
@@ -63,7 +62,7 @@ Once dependencies are installed, navigate to the spades folder and use
 `python spades.py`
 
 ## Acknowledgements
-Special thanks go to Travis and Brian for being very generous with their help, suggestions, code review, encouragement, and positivity.
+Special thanks go to [Travis](https://github.com/thieman) and [Brian](https://github.com/farrspace) for being very generous with their help, suggestions, code review, encouragement, and positivity.
 
 Thanks to Brian (again) for creating the spiffy card graphics and contributing
 to the code.
