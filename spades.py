@@ -2,11 +2,13 @@
 import time
 import random
 import platform
-import subprocess
 import sys
 import os
-import textwrap
 import signal
+# import subprocess
+# import textwrap
+
+
 
 from graphical_card import graphical_hand
 
